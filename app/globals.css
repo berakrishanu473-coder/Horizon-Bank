@@ -97,12 +97,6 @@
   }
 }
 
-/* ------------------------------------------------------------------
-   BASE
-   (The old `* { margin:0; padding:0; box-sizing }` reset was removed:
-   Tailwind's preflight already does this, and un-layered CSS like that
-   would override every p-*, m-* utility in v4.)
-------------------------------------------------------------------- */
 @layer base {
   /* v4 changed default border color to currentColor; restore v3 behavior */
   *,
@@ -121,9 +115,6 @@
   }
 }
 
-/* ------------------------------------------------------------------
-   CUSTOM UTILITIES  (v3 `@layer utilities` -> v4 `@utility`)
-------------------------------------------------------------------- */
 
 /* Background images (were in tailwind.config backgroundImage) */
 @utility bg-bank-gradient {
@@ -143,7 +134,6 @@
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 
-  /* Chrome, Safari and Opera */
   &::-webkit-scrollbar {
     display: none;
   }
