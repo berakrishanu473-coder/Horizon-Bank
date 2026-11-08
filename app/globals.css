@@ -404,7 +404,7 @@
 }
 
 @utility form-label {
-  @apply text-14 w-full max-w-[280px] font-medium text-gray-700;
+  @apply text-14 w-full max-w-70 font-medium text-gray-700;
 }
 
 @utility form-message {
