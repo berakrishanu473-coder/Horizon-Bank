@@ -13,24 +13,63 @@ import {
   CardFooter,
 } from "@/components/ui/card"
 import {
-  Field,
   FieldGroup,
 } from "@/components/ui/field"
 import CustomInput from './CustomInput'
 import { authFormSchema } from '@/lib/utils'
+import { Loader2 } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { signIn, signUp } from '@/lib/user.actions'
 
 const AuthForm = ({ type }: { type: string }) => {
+    const router = useRouter();
     const [user, setUser] = useState(null);
+    const [isLoading, setIsLoding] = useState(false);
 
-    const form = useForm<z.infer<typeof authFormSchema>>({
-        resolver: zodResolver(authFormSchema),
+    const formSchema = authFormSchema(type);
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
         defaultValues: {
+            firstName: "",
+            lastName: "",
+            address1: "",
+            state: "",
+            city: "",
+            postalCode: "",
+            dateOfBirth: "",
+            ssn: "",
             email: "",
             password: "",
         },
     })
-    function onSubmit(data: z.infer<typeof authFormSchema>) {
-        console.log(data)
+    const onSubmit = async(data: z.infer<typeof formSchema>) => {
+        setIsLoding(true);
+        
+        try {
+            // sign up with Appwrite & create plaid token
+
+            if(type === 'sign-up') {
+                const newUser = await signUp(data);
+
+                setUser(newUser);
+            }
+
+            if(type === 'sign-in') {
+                const response = await signIn({
+                    email: data.email,
+                    password: data.password
+                });
+
+                if(response) {
+                    router.push('/');
+                }
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoding(false);
+        }
     }
 
   return (
@@ -53,10 +92,10 @@ const AuthForm = ({ type }: { type: string }) => {
                 <h1 className='text-24 lg:text-36 font-semibold text-gray-900'>
                     {user ? 'Link Account'
                        : type === 'sign-in'
-                       ? 'sign-in'
-                        : 'sign-up'
+                       ? 'Sign In'
+                        : 'Sign Up'
                     }
-                    <p className='text-16 font-normal text-gray-600'>
+                    <p className='text-16 font-normal text-gray-600 my-1.5'>
                         {user ? 'Link your account to get started'
                               : 'Please enter your details'
                         }
@@ -74,6 +113,71 @@ const AuthForm = ({ type }: { type: string }) => {
                 <CardContent>
                     <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
                         <FieldGroup>
+                            {type === 'sign-up' && (
+                                <>
+                                    <div className='flex gap-4'>
+                                        <CustomInput 
+                                            control={form.control}  
+                                            name='firstName'
+                                            label='First Name'
+                                            placeholder="Enter your first name"
+                                        />
+
+                                        <CustomInput 
+                                            control={form.control}  
+                                            name='lastName'
+                                            label='Last Name'
+                                            placeholder="Enter your last name"
+                                        />
+                                    </div>
+
+                                    <CustomInput 
+                                        control={form.control}  
+                                        name='address1'
+                                        label='Address'
+                                        placeholder="Enter your specific address"
+                                    />
+
+                                    <CustomInput 
+                                        control={form.control}  
+                                        name='state'
+                                        label='State'
+                                        placeholder="Enter your state"
+                                    />
+
+                                    <div className='flex gap-4'>
+                                        <CustomInput 
+                                            control={form.control}  
+                                            name='city'
+                                            label='City'
+                                            placeholder="Enter your city"
+                                        />
+
+                                        <CustomInput 
+                                            control={form.control}  
+                                            name='postalCode'
+                                            label='Postal code'
+                                            placeholder="ex : 750550"
+                                        />
+                                    </div>
+
+                                    <div className='flex gap-4'>
+                                        <CustomInput 
+                                            control={form.control}  
+                                            name='dateOfBirth'
+                                            label='Date of Birth'
+                                            placeholder="YYYY-MM-DD"
+                                        />
+
+                                        <CustomInput 
+                                            control={form.control}  
+                                            name='ssn'
+                                            label='SSN'
+                                            placeholder="ex : 1234"
+                                        />
+                                    </div>
+                                </>
+                            )}
                             <CustomInput 
                                 control={form.control}  
                                 name='email'
@@ -90,16 +194,44 @@ const AuthForm = ({ type }: { type: string }) => {
                         </FieldGroup>
                     </form>
                 </CardContent>
-                <CardFooter>
-                    <Field orientation="horizontal">
-                    <Button type="button" variant="outline" onClick={() => form.reset()}>
-                        Reset
-                    </Button>
-                    <Button type="submit" form="form-rhf-demo">
-                        Submit
-                    </Button>
-                    </Field>
+                <CardFooter className='border-none'>
+                    <div className='flex w-full flex-col gap-4'>
+                        <Button 
+                            type="submit" 
+                            form="form-rhf-demo" 
+                            className="form-btn h-10 flex-center"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? (
+                                <>
+                                    <Loader2 
+                                        size={20}
+                                        className='animate-spin'
+                                    /> &nbsp; 
+                                    Loading...
+                                </>
+                            ) : (
+                                type === 'sign-in' ? 'Sign In' : 'Sign Up'
+                            )}
+                        </Button>
+                    </div>
                 </CardFooter>
+
+                <footer className='flex justify-center gap-1.5'>
+                    <p className='text-14 font-normal text-gray-600'>
+                        {
+                            type === 'sign-in' ? 
+                                    "Don't have an account?"
+                                  : "Already have an account?"
+                        }
+                    </p>
+                    <Link
+                        href={type === 'sign-in' ? "/sign-up" : "/sign-in"}
+                        className='form-link'
+                    >
+                        {type === 'sign-in' ? 'Sign Up' : 'Sign In'}
+                    </Link>
+                </footer>
             </>
           )
         }

@@ -196,10 +196,17 @@ export const getTransactionStatus = (date: Date) => {
 };
 
 // auth form zod validation
-export const authFormSchema = z.object({
-        email: z
-            .email(),
-        password: z
-            .string()
-            .min(8)
+export const authFormSchema = (type: string) => z.object({
+        // sign up
+        firstName: type === 'sign-in' ? z.string().optional() : z.string().min(2),
+        lastName: type === 'sign-in' ? z.string().optional() : z.string().min(2),
+        address1: type === 'sign-in' ? z.string().optional() : z.string().min(10).max(100),
+        state: type === 'sign-in' ? z.string().optional() : z.string().min(3),
+        city: type === 'sign-in' ? z.string().optional() : z.string().min(3),
+        postalCode: type === 'sign-in' ? z.string().optional() : z.string().min(6).max(6),
+        dateOfBirth: type === 'sign-in' ? z.string().optional() : z.string().min(8).max(10),
+        ssn: type === 'sign-in' ? z.string().optional() : z.string().min(3),
+        // both sign up & sign in
+        email: z.email(),
+        password: z.string().min(8),
     })
