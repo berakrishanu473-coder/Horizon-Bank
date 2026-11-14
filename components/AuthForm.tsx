@@ -53,7 +53,7 @@ const AuthForm = ({ type }: { type: string }) => {
             if(type === 'sign-up') {
                 const userData = {
                     firstName: data.firstName!,
-                    laststName: data.lastName!,
+                    lastName: data.lastName!,
                     address1: data.address1!,
                     city: data.city!,
                     state: data.state!,
@@ -117,11 +117,11 @@ const AuthForm = ({ type }: { type: string }) => {
             </div>
         </header>
 
-        {/* {user ? ( */}
+        {user ? (
             <div className='flex flex-col gap-4'>
                 <PlaidLink user={user} variant="primary" />
             </div>
-          {/* ) : ( */}
+            ) : ( 
             <>
                 <CardContent>
                     <form id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
@@ -154,8 +154,8 @@ const AuthForm = ({ type }: { type: string }) => {
                                     <CustomInput 
                                         control={form.control}  
                                         name='state'
-                                        label='State'
-                                        placeholder="Enter your state"
+                                        label='State (must be a 2-letter abbreviation of American State)'
+                                        placeholder="ex: NY"
                                     />
 
                                     <div className='flex gap-4'>
@@ -169,8 +169,8 @@ const AuthForm = ({ type }: { type: string }) => {
                                         <CustomInput 
                                             control={form.control}  
                                             name='postalCode'
-                                            label='Postal code'
-                                            placeholder="ex : 750550"
+                                            label='Postal Code (5-numbered American style postal code)'
+                                            placeholder="ex : 75055"
                                         />
                                     </div>
 
@@ -246,8 +246,8 @@ const AuthForm = ({ type }: { type: string }) => {
                     </Link>
                 </footer>
             </>
-          {/* ) */}
-        {/* } */}
+           )
+        }
     </section>
   )
 }
