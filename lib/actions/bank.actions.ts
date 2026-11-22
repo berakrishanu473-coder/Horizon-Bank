@@ -76,21 +76,21 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     const accountData = accountsResponse.data.accounts[0];
 
     // get transfer transactions from appwrite
-    const transferTransactionsData = await getTransactionsByBankId({
-      bankId: bank.$id,
-    });
+    // const transferTransactionsData = await getTransactionsByBankId({
+    //   bankId: bank.$id,
+    // });
 
-    const transferTransactions = transferTransactionsData.documents.map(
-      (transferData: Transaction) => ({
-        id: transferData.$id,
-        name: transferData.name!,
-        amount: transferData.amount!,
-        date: transferData.$createdAt,
-        paymentChannel: transferData.channel,
-        category: transferData.category,
-        type: transferData.senderBankId === bank.$id ? "debit" : "credit",
-      })
-    );
+    // const transferTransactions = transferTransactionsData.documents.map(
+    //   (transferData: Transaction) => ({
+    //     id: transferData.$id,
+    //     name: transferData.name!,
+    //     amount: transferData.amount!,
+    //     date: transferData.$createdAt,
+    //     paymentChannel: transferData.channel,
+    //     category: transferData.category,
+    //     type: transferData.senderBankId === bank.$id ? "debit" : "credit",
+    //   })
+    // );
 
     // get institution info from plaid
     const institution = await getInstitution({
@@ -115,14 +115,14 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     };
 
     // sort transactions by date such that the most recent transaction is first
-    const allTransactions = [...transactions, ...transferTransactions].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
+    // const allTransactions = [...transactions, ...transferTransactions].sort(
+    //   (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    // );
 
-    return parseStringify({
-      data: account,
-      transactions: allTransactions,
-    });
+    // return parseStringify({
+    //   data: account,
+    //   transactions: allTransactions,
+    // });
   } catch (error) {
     console.error("An error occurred while getting the account:", error);
   }
@@ -153,36 +153,36 @@ export const getTransactions = async ({
   let hasMore = true;
   let transactions: any = [];
 
-  try {
+  // try {
     // Iterate through each page of new transaction updates for item
-    while (hasMore) {
-      const response = await plaidClient.transactionsSync({
-        access_token: accessToken,
-      });
+    // while (hasMore) {
+      // const response = await plaidClient.transactionsSync({
+      //   access_token: accessToken,
+      // });
 
-      const data = response.data;
+      // const data = response.data;
 
-      transactions = response.data.added.map((transaction) => ({
-        id: transaction.transaction_id,
-        name: transaction.name,
-        paymentChannel: transaction.payment_channel,
-        type: transaction.payment_channel,
-        accountId: transaction.account_id,
-        amount: transaction.amount,
-        pending: transaction.pending,
-        category: transaction.category ? transaction.category[0] : "",
-        date: transaction.date,
-        image: transaction.logo_url,
-      }));
+      // transactions = response.data.added.map((transaction) => ({
+      //   id: transaction.transaction_id,
+      //   name: transaction.name,
+      //   paymentChannel: transaction.payment_channel,
+      //   type: transaction.payment_channel,
+      //   accountId: transaction.account_id,
+      //   amount: transaction.amount,
+      //   pending: transaction.pending,
+      //   category: transaction.category ? transaction.category[0] : "",
+      //   date: transaction.date,
+      //   image: transaction.logo_url,
+      // }));
 
-      hasMore = data.has_more;
+    //   hasMore = data.has_more;
     }
 
-    return parseStringify(transactions);
-  } catch (error) {
-    console.error("An error occurred while getting the accounts:", error);
-  }
-};
+    // return parseStringify(transactions);
+  // } catch (error) {
+  //   console.error("An error occurred while getting the accounts:", error);
+  // }
+// };
 
 // Create Transfer
 export const createTransfer = async () => {
