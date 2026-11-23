@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/tabs"
 import { BankTabItem } from './BankTabItem'
 import BankInfo from './BankInfo'
+import TransactionsTable from './TransactionsTable'
 
 const RecentTransactions = ({ accounts, transactions = [], appwriteItemId, page = 1}: RecentTransactionsProps) => {
   return (
@@ -44,6 +45,8 @@ const RecentTransactions = ({ accounts, transactions = [], appwriteItemId, page 
                        appwriteItemId={appwriteItemId}
                        type='full'
                     />
+
+                    <TransactionsTable transactions={transactions}/>
                 </TabsContent>
             ))}
         </Tabs>
