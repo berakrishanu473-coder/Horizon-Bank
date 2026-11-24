@@ -5,7 +5,7 @@ import { createAdminClient, createSessionClient } from "../appwrite";
 import { cookies } from "next/headers";
 import { encryptId, extractCustomerIdFromUrl, parseStringify } from "../utils";
 import { CountryCode, ProcessorTokenCreateRequest, ProcessorTokenCreateRequestProcessorEnum, Products } from "plaid/legacy";
-import { plaidClient } from "../plaid.config";
+import { plaidClient } from "../plaid";
 import { revalidatePath } from "next/cache";
 import { addFundingSource, createDwollaCustomer } from "./dwolla.actions";
 
@@ -145,6 +145,7 @@ export const createLinkToken = async(user: User) => {
             },
             client_name: `${user.firstName} ${user.lastName}`,
             products: ['auth'] as Products[],
+            additional_consented_products: ["transactions"] as Products[],
             language: 'en',
             country_codes: ['US'] as CountryCode[],
         }
@@ -154,6 +155,7 @@ export const createLinkToken = async(user: User) => {
         return parseStringify({ linkToken: response.data.link_token })
     } catch (error) {
         console.log(error);
+        throw error
     }
 }
 

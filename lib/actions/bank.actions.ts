@@ -9,11 +9,12 @@ import {
   TransferType,
 } from "plaid/legacy";
 
-import { plaidClient } from "../plaid.config";
+import { plaidClient } from "../plaid"
 import { parseStringify } from "../utils";
 
 // import { getTransactionsByBankId } from "./transaction.actions";
 import { getBanks, getBank } from "./user.actions";
+import { getTransactionsByBankId } from "./transaction.actions";
 
 // Get multiple bank accounts
 export const getAccounts = async ({ userId }: getAccountsProps) => {
@@ -80,7 +81,7 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
       bankId: bank.$id,
     });
 
-    const transferTransactions = transferTransactionsData.documents.map(
+    const transferTransactions = (transferTransactionsData?.rows ?? []).map(
       (transferData: Transaction) => ({
         id: transferData.$id,
         name: transferData.name!,
@@ -151,38 +152,44 @@ export const getTransactions = async ({
   accessToken,
 }: getTransactionsProps) => {
   let hasMore = true;
+  let cursor: string | undefined = undefined;
   let transactions: any = [];
 
-  // try {
+  try {
     // Iterate through each page of new transaction updates for item
-    // while (hasMore) {
-      // const response = await plaidClient.transactionsSync({
-      //   access_token: accessToken,
-      // });
+    while (hasMore) {
+      const response = await plaidClient.transactionsSync({
+        access_token: accessToken,
+        cursor: cursor
+      });
 
-      // const data = response.data;
+      const data = response.data;
 
-      // transactions = response.data.added.map((transaction) => ({
-      //   id: transaction.transaction_id,
-      //   name: transaction.name,
-      //   paymentChannel: transaction.payment_channel,
-      //   type: transaction.payment_channel,
-      //   accountId: transaction.account_id,
-      //   amount: transaction.amount,
-      //   pending: transaction.pending,
-      //   category: transaction.category ? transaction.category[0] : "",
-      //   date: transaction.date,
-      //   image: transaction.logo_url,
-      // }));
+      const newTransactions = response.data.added.map((transaction) => ({
+        id: transaction.transaction_id,
+        name: transaction.name,
+        paymentChannel: transaction.payment_channel,
+        type: transaction.payment_channel,
+        accountId: transaction.account_id,
+        amount: transaction.amount,
+        pending: transaction.pending,
+        category: transaction.category ? transaction.category[0] : "",
+        date: transaction.date,
+        image: transaction.logo_url,
+      }));
 
-    //   hasMore = data.has_more;
+      transactions = [...transactions, ...newTransactions];
+
+      cursor = data.next_cursor;
+      hasMore = data.has_more;
     }
 
-    // return parseStringify(transactions);
-  // } catch (error) {
-  //   console.error("An error occurred while getting the accounts:", error);
-  // }
-// };
+    return parseStringify(transactions);
+  } catch (error) {
+    console.error("An error occurred while getting the accounts:", error);
+    throw error;
+  }
+};
 
 // Create Transfer
 export const createTransfer = async () => {
