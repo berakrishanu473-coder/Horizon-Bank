@@ -26,12 +26,12 @@ const BankCard = ({ account, userName, showBalance }: CreditCardProps) => {
                     </h1>
 
                     <h2 className="text-10 font-semibold text-white">
-                        12 / 34
+                        ** / **
                     </h2>
                 </div>
 
                 <p className="text-14 font-semibold tracking-[1.1px] text-white">
-                    1234 1234 1234 <span className="text-16">{1234}</span>
+                    **** **** **** <span className="text-16">{1234}</span>
                 </p>
             </article>
          </div>
