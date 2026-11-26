@@ -1,4 +1,5 @@
 import HeaderBox from "@/components/HeaderBox"
+import { Pagination } from "@/components/Pagination";
 import TransactionsTable from "@/components/TransactionsTable";
 import { getAccount, getAccounts } from "@/lib/actions/bank.actions";
 import { getLoggedInUser } from "@/lib/actions/user.actions";
@@ -8,17 +9,25 @@ const TransactionHistory = async({ searchParams }: SearchParamProps) => {
   const { id, page } = await searchParams;
   const currentPage = Number(page as string) || 1;
   
-      const loggedIn = await getLoggedInUser();
-      const accounts = await getAccounts({
-        userId: loggedIn.$id
-      });
+  const loggedIn = await getLoggedInUser();
+  const accounts = await getAccounts({
+    userId: loggedIn.$id
+  });
   
-      if(!accounts) return;
+  if(!accounts) return;
   
-      const accountsData = accounts?.data;
-      const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
+  const accountsData = accounts?.data;
+  const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
   
-      const account = await getAccount({ appwriteItemId });
+  const account = await getAccount({ appwriteItemId });
+
+  const rowsPerPage = 10;
+  const totalPages = Math.ceil(account?.transactions.length / rowsPerPage);
+
+  const indexOfLastTransaction = currentPage * rowsPerPage;
+  const indexOfFirstTransaction = indexOfLastTransaction - rowsPerPage;
+
+  const currentTransactions = account?.transactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
   return (
     <div className='transactions'>
       <div className='transactions-header'>
@@ -50,8 +59,16 @@ const TransactionHistory = async({ searchParams }: SearchParamProps) => {
 
         <section className="flex w-full flex-col gap-6">
           <TransactionsTable 
-            transactions={account?.transactions}
+            transactions={currentTransactions}
           />
+          {totalPages > 1 && (
+            <div className='my-4 w-full'>
+              <Pagination
+                totalPages={totalPages}
+                page={currentPage}
+               />
+            </div>
+          )}
         </section>
       </div>
     </div>
