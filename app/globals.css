@@ -441,7 +441,7 @@
 }
 
 @utility payment-transfer_btn {
-  @apply text-14! w-full! bg-bank-gradient! font-semibold! text-white! shadow-form!;
+  @apply text-14! h-12! w-full! bg-bank-gradient! font-semibold! text-white! shadow-form!;
 }
 
 /* Root Layout */

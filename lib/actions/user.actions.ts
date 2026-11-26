@@ -287,3 +287,21 @@ export const getBank = async({ rowId }: getBankProps) => {
     console.log(error);
   }
 }
+
+export const getBankByAccountId = async({accountId}: getBankByAccountIdProps) => {
+  try {
+    const { database } = await createAdminClient();
+
+    const bank = await database.listRows({
+      databaseId: DATABASE_ID!,
+      tableId: BANK_COLLECTION_ID!,
+      queries: [Query.equal('accountId', [accountId])]
+    });
+
+    if(bank.total !== 1) return null;
+
+    return parseStringify(bank.rows[0]);
+  } catch (error) {
+    console.log(error);
+  }
+}
