@@ -11,6 +11,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import Footer from "./Footer"
+import PlaidLink from "./PlaidLink"
 
 const MobileNav = ({ user }: MobileNavProps) => {
     const pathname = usePathname();
@@ -71,7 +72,7 @@ const MobileNav = ({ user }: MobileNavProps) => {
                             )
                         })}
 
-                        USER
+                        <PlaidLink user={user} variant="primary" />
                     </nav>
                 </div>
                 <Footer user={user} type="mobile" />
